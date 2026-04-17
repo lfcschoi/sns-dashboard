@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<!-- saved from url=(0055)file:///C:/Users/user/Downloads/sns_ad_dashboard_5.html -->
+<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNS 광고 대시보드</title>
+<link href="./index_files/css2" rel="stylesheet">
+<style>
+:root{--bg:#f5f4f0;--surface:#fff;--surface2:#f0efe9;--border:#e2e0d8;--border2:#d0cec4;--text:#1a1917;--text2:#6b6960;--text3:#9e9c95;--mono:'DM Mono',monospace;--sans:'Noto Sans KR',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh;}
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh;}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:2rem 1.25rem;display:flex;flex-direction:column;gap:1.5rem;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.main{padding:2rem;overflow-x:hidden;}
+.logo{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.logo span{color:var(--text3);font-weight:400;}
+.nav{display:flex;flex-direction:column;gap:2px;}
+.nav-sec{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:0 10px;margin-bottom:4px;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-size:13px;color:var(--text2);cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:background .15s,color .15s;font-family:var(--sans);}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--text);color:#fff;}
+.nav-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.save-row{display:flex;flex-direction:column;gap:8px;margin-top:auto;}
+.save-info{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);}
+.save-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem;gap:12px;flex-wrap:wrap;}
+.page-title{font-size:22px;font-weight:700;}
+.page-sub{font-size:13px;color:var(--text3);margin-top:2px;}
+.hd-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:500;border:1px solid var(--border2);background:var(--surface);cursor:pointer;color:var(--text);transition:background .15s;font-family:var(--sans);white-space:nowrap;}
+.btn:hover{background:var(--surface2);}
+.btn-primary{background:var(--text);color:#fff;border-color:var(--text);}
+.btn-primary:hover{background:#333;}
+.btn-save{background:#16a34a;color:#fff;border-color:#16a34a;font-weight:700;}
+.btn-save:hover{background:#15803d;}
+.btn-danger{background:#fee2e2;color:#991b1b;border-color:#fca5a5;}
+.btn-danger:hover{background:#fecaca;}
+.btn-sm{padding:4px 10px;font-size:11px;border-radius:6px;}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:1.5rem;}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;}
+.metric-label{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.metric-value{font-family:var(--mono);font-size:18px;font-weight:500;}
+.metric-sub{font-size:11px;color:var(--text3);margin-top:4px;}
+/* Budget tracker */
+.bt{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;}
+.bt-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:.75rem;}
+.bt-label{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.bt-nums{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.bt-used{font-family:var(--mono);font-size:19px;font-weight:500;}
+.bt-slash{font-size:14px;color:var(--text3);}
+.bt-total-d{font-family:var(--mono);font-size:14px;color:var(--text2);}
+.bt-input-row{display:flex;align-items:center;gap:8px;}
+.bt-input-lbl{font-size:12px;color:var(--text3);white-space:nowrap;}
+.bt-inp{font-family:var(--mono);font-size:13px;padding:5px 10px;border:1px solid var(--border2);border-radius:8px;background:var(--surface);color:var(--text);width:170px;}
+.bt-inp:focus{outline:none;border-color:var(--text);}
+.bt-pct-block{text-align:right;flex-shrink:0;}
+.bt-pct{font-family:var(--mono);font-size:30px;font-weight:500;}
+.bt-remain{font-size:12px;color:var(--text3);margin-top:2px;}
+.progress-wrap{height:10px;background:var(--surface2);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:99px;transition:width .4s ease;}
+.p-safe{background:#16a34a;}.p-warn{background:#d97706;}.p-over{background:#dc2626;}
+.month-bars{margin-top:1rem;display:flex;flex-direction:column;gap:7px;}
+.mbar-row{display:flex;align-items:center;gap:10px;}
+.mbar-lbl{font-size:12px;color:var(--text2);width:28px;flex-shrink:0;}
+.mbar-track{flex:1;height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;}
+.mbar-fill{height:100%;border-radius:99px;}
+.mbar-val{font-family:var(--mono);font-size:11px;color:var(--text3);width:130px;text-align:right;flex-shrink:0;}
+/* Month blocks */
+.section-title{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text2);}
+.sec-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.month-block{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;}
+.month-head{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;cursor:pointer;border:none;background:none;width:100%;text-align:left;}
+.month-head:hover{background:var(--surface2);}
+.mh-l{display:flex;align-items:center;gap:12px;}
+.mh-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.mh-name{font-size:15px;font-weight:700;}
+.mh-meta{font-size:12px;color:var(--text3);margin-top:1px;}
+.mh-r{display:flex;align-items:center;gap:12px;}
+.mh-stat{text-align:right;}
+.mh-stat-v{font-family:var(--mono);font-size:14px;font-weight:500;}
+.mh-stat-l{font-size:11px;color:var(--text3);}
+.chevron{font-size:12px;color:var(--text3);transition:transform .2s;flex-shrink:0;}
+.month-body{display:none;border-top:1px solid var(--border);}
+.month-body.open{display:block;}
+.creator-table{width:100%;border-collapse:collapse;}
+.creator-table td{padding:12px 1.25rem;border-bottom:1px solid var(--border);vertical-align:top;}
+.creator-table tr:last-child td{border-bottom:none;}
+.col-head{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:8px 1.25rem !important;background:var(--surface2);}
+.c-name{font-size:13px;font-weight:700;}
+.budget-mono{font-family:var(--mono);font-size:13px;font-weight:500;}
+.view-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.view-row:last-child{margin-bottom:0;}
+.plat-badge{font-size:10px;font-weight:700;letter-spacing:.04em;padding:2px 7px;border-radius:20px;flex-shrink:0;min-width:36px;text-align:center;}
+.plat-yt{background:#fee2e2;color:#991b1b;}
+.plat-ig{background:#fce7f3;color:#9d174d;}
+.plat-tt{background:#f3f4f6;color:#374151;}
+.view-inp{font-family:var(--mono);font-size:12px;padding:3px 8px;border:1px solid var(--border);border-radius:6px;width:130px;background:var(--surface);color:var(--text);}
+.view-inp:focus{outline:none;border-color:var(--text);}
+.view-result{font-family:var(--mono);font-size:12px;color:var(--text2);}
+.links-wrap{display:flex;flex-wrap:wrap;gap:5px;}
+.lchip{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 9px;border-radius:20px;border:1px solid;text-decoration:none;transition:opacity .15s;}
+.lchip:hover{opacity:.7;}
+.lc-yt{border-color:#fca5a5;color:#991b1b;background:#fff5f5;}
+.lc-ig{border-color:#f9a8d4;color:#9d174d;background:#fdf2f8;}
+.lc-tt{border-color:#d1d5db;color:#374151;background:#f9fafb;}
+/* perf */
+.perf-table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+.perf-table th{padding:10px 16px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);background:var(--surface2);text-align:left;border-bottom:1px solid var(--border);}
+.perf-table td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;}
+.perf-table tr:last-child td{border-bottom:none;}
+.mono{font-family:var(--mono);}
+.rank-1{color:#d97706;font-weight:700;}.rank-2{color:var(--text2);font-weight:500;}.rank-3{color:var(--text3);}
+/* Modals */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:16px;padding:2rem;width:620px;max-width:100%;margin:auto;}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:1.5rem;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1.5rem;align-items:center;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);}
+.form-input{padding:8px 12px;border:1px solid var(--border2);border-radius:8px;font-size:13px;font-family:var(--sans);background:var(--surface);color:var(--text);}
+.form-input:focus{outline:none;border-color:var(--text);}
+.divider{height:1px;background:var(--border);margin:1rem 0;}
+.cb{border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:10px;background:var(--surface2);}
+.cb-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.cb-title{font-size:12px;font-weight:700;color:var(--text2);}
+.lr{display:grid;grid-template-columns:90px 1fr auto;gap:8px;margin-bottom:8px;align-items:center;}
+.lr select,.lr input{padding:6px 8px;border:1px solid var(--border2);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text);font-family:var(--sans);}
+.lr input{font-family:var(--mono);font-size:11px;}
+.lr select:focus,.lr input:focus{outline:none;border-color:var(--text);}
+.btn-icon{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);border-radius:6px;background:var(--surface);cursor:pointer;font-size:13px;color:var(--text3);}
+.btn-icon:hover{background:#fee2e2;color:#dc2626;border-color:#fca5a5;}
+/* Creator edit modal link rows */
+.cm-lr{display:grid;grid-template-columns:90px 1fr 110px auto;gap:8px;margin-bottom:8px;align-items:center;}
+.cm-lr select,.cm-lr input{padding:6px 8px;border:1px solid var(--border2);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text);font-family:var(--sans);}
+.cm-lr input{font-family:var(--mono);font-size:11px;}
+.cm-lr select:focus,.cm-lr input:focus{outline:none;border-color:var(--text);}
+.alert{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:12px;}
+.alert-info{background:#dbeafe;color:#1e3a8a;}
+/* Toast */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--text);color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateY(10px);transition:opacity .25s,transform .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+@media(max-width:900px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.metrics{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.metrics{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}.cm-lr{grid-template-columns:80px 1fr auto;}.cm-lr input.cm-views{display:none;}}
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo">SNS Ads<br><span>대시보드</span></div>
+    <nav class="nav">
+      <div class="nav-sec">메뉴</div>
+      <button class="nav-item active" onclick="showPage(&#39;dashboard&#39;,this)"><div class="nav-dot" style="background:#1a1917"></div>전체 현황</button>
+      <button class="nav-item" onclick="showPage(&#39;months&#39;,this)"><div class="nav-dot" style="background:#2563eb"></div>월별 관리</button>
+      <button class="nav-item" onclick="showPage(&#39;performance&#39;,this)"><div class="nav-dot" style="background:#16a34a"></div>광고 성과</button>
+    </nav>
+    <div class="save-row">
+      <button class="btn btn-save" onclick="saveToStorage()" style="width:100%;justify-content:center;font-size:14px;">💾 저장</button>
+      <div class="save-info">
+        <div class="save-dot" id="saveDot" style="background: rgb(22, 163, 74);"></div>
+        <span id="saveStatus">저장됨 · 오후 05:37</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- Dashboard -->
+    <div id="page-dashboard" class="page" style="display: block;">
+      <div class="page-header">
+        <div><div class="page-title">전체 현황</div><div class="page-sub">2026년 SNS 광고 집행 현황</div></div>
+        <div class="hd-actions">
+          <button class="btn btn-save" onclick="saveToStorage()">💾 저장</button>
+          <button class="btn btn-primary" onclick="openMonthModal()">+ 월 추가</button>
+        </div>
+      </div>
+      <div class="bt">
+        <div class="bt-top">
+          <div style="flex:1">
+            <div class="bt-label">예산 사용 현황</div>
+            <div class="bt-nums">
+              <span class="bt-used" id="btUsed">62,700,000원</span>
+              <span class="bt-slash">/</span>
+              <span class="bt-total-d" id="btTotal">240,000,000원</span>
+            </div>
+            <div class="bt-input-row">
+              <span class="bt-input-lbl">연간 총 예산:</span>
+              <input class="bt-inp" id="annualBudgetInput" type="text" placeholder="240,000,000" value="240,000,000" oninput="onBudgetInput(this.value)">
+              <span style="font-size:12px;color:var(--text3)">원</span>
+            </div>
+          </div>
+          <div class="bt-pct-block">
+            <div class="bt-pct" id="btPct" style="color: rgb(22, 163, 74);">26.1%</div>
+            <div class="bt-remain" id="btRemain">잔여 177,300,000원</div>
+          </div>
+        </div>
+        <div class="progress-wrap"><div class="progress-fill p-safe" id="btBar" style="width: 26.1%;"></div></div>
+        <div class="month-bars" id="btMonthBars"><div class="mbar-row"><div class="mbar-lbl">1월</div><div class="mbar-track"><div class="mbar-fill" style="width:9.4%;background:#3266ad"></div></div><div class="mbar-val">22,550,000원 (9.4%)</div></div><div class="mbar-row"><div class="mbar-lbl">2월</div><div class="mbar-track"><div class="mbar-fill" style="width:8%;background:#1D9E75"></div></div><div class="mbar-val">19,250,000원 (8.0%)</div></div><div class="mbar-row"><div class="mbar-lbl">3월</div><div class="mbar-track"><div class="mbar-fill" style="width:8.7%;background:#c13584"></div></div><div class="mbar-val">20,900,000원 (8.7%)</div></div></div>
+      </div>
+      <div class="metrics" id="metricsArea">
+    <div class="metric-card"><div class="metric-label">총 광고 예산</div><div class="metric-value">62,700,000원</div><div class="metric-sub">3개월 집행</div></div>
+    <div class="metric-card"><div class="metric-label">총 조회수</div><div class="metric-value">11,331,894회</div><div class="metric-sub">전 플랫폼 합산</div></div>
+    <div class="metric-card"><div class="metric-label">평균 CPV</div><div class="metric-value">₩5.53</div><div class="metric-sub">조회당 광고 비용</div></div>
+    <div class="metric-card"><div class="metric-label">1만뷰당 비용</div><div class="metric-value">55,331원</div><div class="metric-sub">CPM 기준</div></div></div>
+      <div class="sec-header"><div class="section-title">월별 요약</div></div>
+      <div id="monthSummaryCards"><div class="month-block">
+      <button class="month-head" onclick="toggle(&#39;msm1&#39;,&#39;mcm1&#39;)">
+        <div class="mh-l"><div class="mh-dot" style="background:#3266ad"></div><div><div class="mh-name">1월</div><div class="mh-meta">4명</div></div></div>
+        <div class="mh-r">
+          <div class="mh-stat"><div class="mh-stat-v">22,550,000원</div><div class="mh-stat-l">예산</div></div>
+          <div class="mh-stat"><div class="mh-stat-v">1,799,227회</div><div class="mh-stat-l">조회수</div></div>
+          <div class="mh-stat"><div class="mh-stat-v">₩12.53</div><div class="mh-stat-l">CPV</div></div>
+          <span class="chevron" id="mcm1">▼</span>
+        </div>
+      </button>
+      <div class="month-body" id="msm1">
+        <table class="creator-table">
+          <tbody><tr><td class="col-head" style="width:120px">크리에이터</td><td class="col-head" style="width:150px">예산</td><td class="col-head" style="width:180px">조회수</td><td class="col-head">링크</td></tr>
+          <tr>
+            <td><div class="c-name">그냥필름</div></td>
+            <td><div class="budget-mono">19,800,000원</div></td>
+            <td><div class="view-row"><span class="plat-badge plat-yt">YT</span><span class="view-result">647,455회</span></div><div class="view-row"><span class="plat-badge plat-yt">YT</span><span class="view-result">104,405회</span></div><div class="view-row"><span class="plat-badge plat-ig">IG</span><span class="view-result">802,000회</span></div></td>
+            <td><div class="links-wrap"><a class="lchip lc-yt" href="https://www.youtube.com/watch?v=SXO6GPRaMdA" target="_blank">▶ YT 영상</a><a class="lchip lc-yt" href="https://www.youtube.com/shorts/aqRmlw2zG5c" target="_blank">▶ YT Shorts</a><a class="lchip lc-ig" href="https://www.instagram.com/reel/DUKmdcKkhJR/" target="_blank">◈ IG Reel</a></div></td>
+          </tr><tr>
+            <td><div class="c-name">보리와냥이</div></td>
+            <td><div class="budget-mono">1,430,000원</div></td>
+            <td><div class="view-row"><span class="plat-badge plat-yt">YT</span><span class="view-result">53,274회</span></div><div class="view-row"><span class="plat-badge plat-ig">IG</span><span class="view-result">111,000회</span></div><div class="view-row"><span class="plat-badge plat-tt">TT</span><span class="view-result">14,400회</span></div></td>
+            <td><div class="links-wrap"><a class="lchip lc-yt" href="https://www.youtube.com/shorts/L1i1rjcTRVs" target="_blank">▶ YT Shorts</a><a class="lchip lc-ig" href="https://www.instagram.com/reel/DUKTyQCE2WZ/" target="_blank">◈ IG Reel</a><a class="lchip lc-tt" href="https://www.tiktok.com/@cute.ai27/video/7601374124451122450" target="_blank">♪ TikTok</a></div></td>
+          </tr><tr>
+            <td><div class="c-name">할머니랑나</div></td>
+            <td><div class="budget-mono">1,320,000원</div></td>
+            <td><div class="view-row"><span class="plat-badge plat-yt">YT</span><span class="view-result">66,693회</span></div></td>
+            <td><div class="links-wrap"><a class="lchip lc-yt" href="https://www.youtube.com/shorts/FIbz_qtSt0c" target="_blank">▶ YT Shorts</a></div></td>
+          </tr><tr>
+            <td><div class="c-name">새 크리에이터</div></td>
+            <td><div class="budget-mono">0원</div></td>
+            <td></td>
+            <td><div class="links-wrap"></div></td>
+          </tr>
+        </tbody></table>
+      </div>
+    </div><div class="month-block">
+      <button class="month-head" onclick="toggle(&#39;msm2&#39;,&#39;mcm2&#39;)">
+        <div class="mh-l"><div class="mh-dot" style="background:#1D9E75"></div><div><div class="mh-name">2월</div><div class="mh-meta">2명</div></div></div>
+        <div class="mh-r">
+          <div class="mh-stat"><div class="mh-stat-v">19,250,000원</div><div class="mh-stat-l">예산</div></div>
+          <div class="mh-stat"><div class="mh-stat-v">5,155,679회</div><div class="mh-stat-l">조회수</div></div>
+          <div class="mh-stat"><div class="mh-stat-v">₩3.73</div><div class="mh-stat-l">CPV</div></div>
+          <span class="chevron" id="mcm2">▼</span>
+        </div>
+      </button>
+      <div class="month-body" id="msm2">
+        <table class="creator-table">
+          <tbody><tr><td class="col-head" style="width:120px">크리에이터</td><td class="col-head" style="width:150px">예산</td><td class="col-head" style="width:180px">조회수</td><td class="col-head">링크</td></tr>
+          <tr>
+            <td><div class="c-name">수빙수</div></td>
+            <td><div class="budget-mono">13,200,000원</div></td>
+            <td><div class="view-row"><span class="plat-badge plat-yt">YT</span><span class="view-result">74,392회</span></div><div class="view-row"><span class="plat-badge plat-yt">YT</span><span class="view-result">31,446회</span></div></td>
+            <td><div class="links-wrap"><a class="lchip lc-yt" href="https://www.youtube.com/watch?v=gkIfmma2JvM&amp;t=235s" target="_blank">▶ YT 영상</a><a class="lchip lc-yt" href="https://www.youtube.com/shorts/bfxlHkMW0ZA" target="_blank">▶ YT Shorts</a></div></td>
+          </tr><tr>
+            <td><div class="c-name">복득이</div></td>
+            <td><div class="budget-mono">6,050,000원</div></td>
+            <td><div class="view-row"><span class="plat-badge plat-yt">YT</span><span class="view-result">1,859,841회</span></div><div class="view-row"><span class="plat-badge plat-ig">IG</span><span class="view-result">3,190,000회</span></div></td>
+            <td><div class="links-wrap"><a class="lchip lc-yt" href="https://www.youtube.com/shorts/RsPZD5DczPA" target="_blank">▶ YT Shorts</a><a class="lchip lc-ig" href="https://www.instagram.com/reel/DU-kcp-EUly/" target="_blank">◈ IG Reel</a></div></td>
+          </tr>
+        </tbody></table>
+      </div>
+    </div><div class="month-block">
+      <button class="month-head" onclick="toggle(&#39;msm3&#39;,&#39;mcm3&#39;)">
+        <div class="mh-l"><div class="mh-dot" style="background:#c13584"></div><div><div class="mh-name">3월</div><div class="mh-meta">1명</div></div></div>
+        <div class="mh-r">
+          <div class="mh-stat"><div class="mh-stat-v">20,900,000원</div><div class="mh-stat-l">예산</div></div>
+          <div class="mh-stat"><div class="mh-stat-v">4,376,988회</div><div class="mh-stat-l">조회수</div></div>
+          <div class="mh-stat"><div class="mh-stat-v">₩4.77</div><div class="mh-stat-l">CPV</div></div>
+          <span class="chevron" id="mcm3">▼</span>
+        </div>
+      </button>
+      <div class="month-body" id="msm3">
+        <table class="creator-table">
+          <tbody><tr><td class="col-head" style="width:120px">크리에이터</td><td class="col-head" style="width:150px">예산</td><td class="col-head" style="width:180px">조회수</td><td class="col-head">링크</td></tr>
+          <tr>
+            <td><div class="c-name">한스</div></td>
+            <td><div class="budget-mono">20,900,000원</div></td>
+            <td><div class="view-row"><span class="plat-badge plat-yt">YT</span><span class="view-result">326,324회</span></div><div class="view-row"><span class="plat-badge plat-yt">YT</span><span class="view-result">1,001,864회</span></div><div class="view-row"><span class="plat-badge plat-ig">IG</span><span class="view-result">2,871,000회</span></div><div class="view-row"><span class="plat-badge plat-tt">TT</span><span class="view-result">177,800회</span></div></td>
+            <td><div class="links-wrap"><a class="lchip lc-yt" href="https://www.youtube.com/watch?v=wTWhS5l6KH4&amp;t=183s" target="_blank">▶ YT 영상</a><a class="lchip lc-yt" href="https://www.youtube.com/shorts/a4M4s78JXAg" target="_blank">▶ YT Shorts</a><a class="lchip lc-ig" href="https://www.instagram.com/reel/DV0x9v6jo6U/" target="_blank">◈ IG Reel</a><a class="lchip lc-tt" href="https://www.tiktok.com/@hans.daily/video/7616718596625976583" target="_blank">♪ TikTok</a></div></td>
+          </tr>
+        </tbody></table>
+      </div>
+    </div></div>
+    </div>
+
+    <!-- Months -->
+    <div id="page-months" class="page" style="display: none;">
+      <div class="page-header">
+        <div><div class="page-title">월별 관리</div><div class="page-sub">크리에이터 · 예산 · 조회수 · 링크 등록 및 편집</div></div>
+        <div class="hd-actions">
+          <button class="btn btn-save" onclick="saveToStorage()">💾 저장</button>
+          <button class="btn btn-primary" onclick="openMonthModal()">+ 월 추가</button>
+        </div>
+      </div>
+      <div class="alert alert-info">조회수 입력 후 반드시 <strong>💾 저장</strong>을 눌러야 브라우저에 저장됩니다.</div>
+      <div id="monthDetailBlocks"><div class="month-block">
+      <button class="month-head" onclick="toggle(&#39;mdm1&#39;,&#39;mdcm1&#39;)">
+        <div class="mh-l"><div class="mh-dot" style="background:#3266ad"></div><div><div class="mh-name">1월</div><div class="mh-meta">4명 · 22,550,000원</div></div></div>
+        <div class="mh-r">
+          <div class="mh-stat"><div class="mh-stat-v">1,799,227회</div><div class="mh-stat-l">총 조회수</div></div>
+          </div></button><button class="btn btn-sm" onclick="event.stopPropagation();openMonthEditModal(&#39;m1&#39;)">월 편집</button>
+          <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteMonth(&#39;m1&#39;)">삭제</button>
+          <span class="chevron" id="mdcm1" style="transform:rotate(180deg)">▼</span>
+        </div>
+      
+      <div class="month-body open" id="mdm1">
+        <table class="creator-table">
+          <tbody><tr><td class="col-head" style="width:110px">크리에이터</td><td class="col-head" style="width:145px">예산</td><td class="col-head">조회수 입력</td><td class="col-head">링크</td><td class="col-head" style="width:60px">편집</td></tr>
+          <tr>
+            <td><div class="c-name">그냥필름</div></td>
+            <td><div class="budget-mono">19,800,000원</div></td>
+            <td><div class="view-row">
+              <span class="plat-badge plat-yt">YT</span>
+              <input class="view-inp" value="647455" placeholder="조회수" onchange="saveViews(&#39;m1&#39;,0,0,this.value)">
+              <span class="view-result">647,455회</span>
+            </div><div class="view-row">
+              <span class="plat-badge plat-yt">YT</span>
+              <input class="view-inp" value="104405" placeholder="조회수" onchange="saveViews(&#39;m1&#39;,0,1,this.value)">
+              <span class="view-result">104,405회</span>
+            </div><div class="view-row">
+              <span class="plat-badge plat-ig">IG</span>
+              <input class="view-inp" value="802000" placeholder="조회수" onchange="saveViews(&#39;m1&#39;,0,2,this.value)">
+              <span class="view-result">802,000회</span>
+            </div></td>
+            <td><div class="links-wrap"><a class="lchip lc-yt" href="https://www.youtube.com/watch?v=SXO6GPRaMdA" target="_blank">▶ YT 영상</a><a class="lchip lc-yt" href="https://www.youtube.com/shorts/aqRmlw2zG5c" target="_blank">▶ YT Shorts</a><a class="lchip lc-ig" href="https://www.instagram.com/reel/DUKmdcKkhJR/" target="_blank">◈ IG Reel</a></div></td>
+            <td><button class="btn btn-sm" onclick="openCreatorModal(&#39;m1&#39;,&#39;c1&#39;)">편집</button></td>
+          </tr><tr>
+            <td><div class="c-name">보리와냥이</div></td>
+            <td><div class="budget-mono">1,430,000원</div></td>
+            <td><div class="view-row">
+              <span class="plat-badge plat-yt">YT</span>
+              <input class="view-inp" value="53274" placeholder="조회수" onchange="saveViews(&#39;m1&#39;,1,0,this.value)">
+              <span class="view-result">53,274회</span>
+            </div><div class="view-row">
+              <span class="plat-badge plat-ig">IG</span>
+              <input class="view-inp" value="111000" placeholder="조회수" onchange="saveViews(&#39;m1&#39;,1,1,this.value)">
+              <span class="view-result">111,000회</span>
+            </div><div class="view-row">
+              <span class="plat-badge plat-tt">TT</span>
+              <input class="view-inp" value="14400" placeholder="조회수" onchange="saveViews(&#39;m1&#39;,1,2,this.value)">
+              <span class="view-result">14,400회</span>
+            </div></td>
+            <td><div class="links-wrap"><a class="lchip lc-yt" href="https://www.youtube.com/shorts/L1i1rjcTRVs" target="_blank">▶ YT Shorts</a><a class="lchip lc-ig" href="https://www.instagram.com/reel/DUKTyQCE2WZ/" target="_blank">◈ IG Reel</a><a class="lchip lc-tt" href="https://www.tiktok.com/@cute.ai27/video/7601374124451122450" target="_blank">♪ TikTok</a></div></td>
+            <td><button class="btn btn-sm" onclick="openCreatorModal(&#39;m1&#39;,&#39;c2&#39;)">편집</button></td>
+          </tr><tr>
+            <td><div class="c-name">할머니랑나</div></td>
+            <td><div class="budget-mono">1,320,000원</div></td>
+            <td><div class="view-row">
+              <span class="plat-badge plat-yt">YT</span>
+              <input class="view-inp" value="66693" placeholder="조회수" onchange="saveViews(&#39;m1&#39;,2,0,this.value)">
+              <span class="view-result">66,693회</span>
+            </div></td>
+            <td><div class="links-wrap"><a class="lchip lc-yt" href="https://www.youtube.com/shorts/FIbz_qtSt0c" target="_blank">▶ YT Shorts</a></div></td>
+            <td><button class="btn btn-sm" onclick="openCreatorModal(&#39;m1&#39;,&#39;c3&#39;)">편집</button></td>
+          </tr><tr>
+            <td><div class="c-name">새 크리에이터</div></td>
+            <td><div class="budget-mono">0원</div></td>
+            <td></td>
+            <td><div class="links-wrap"></div></td>
+            <td><button class="btn btn-sm" onclick="openCreatorModal(&#39;m1&#39;,&#39;_wmab1v4&#39;)">편집</button></td>
+          </tr>
+        </tbody></table>
+        <div style="padding:10px 1.25rem;border-top:1px solid var(--border);">
+          <button class="btn btn-sm" onclick="quickAddCreator(&#39;m1&#39;)">+ 크리에이터 추가</button>
+        </div>
+      </div>
+    <div class="month-block">
+      <button class="month-head" onclick="toggle(&#39;mdm2&#39;,&#39;mdcm2&#39;)">
+        <div class="mh-l"><div class="mh-dot" style="background:#1D9E75"></div><div><div class="mh-name">2월</div><div class="mh-meta">2명 · 19,250,000원</div></div></div>
+        <div class="mh-r">
+          <div class="mh-stat"><div class="mh-stat-v">5,155,679회</div><div class="mh-stat-l">총 조회수</div></div>
+          </div></button><button class="btn btn-sm" onclick="event.stopPropagation();openMonthEditModal(&#39;m2&#39;)">월 편집</button>
+          <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteMonth(&#39;m2&#39;)">삭제</button>
+          <span class="chevron" id="mdcm2" style="transform:rotate(180deg)">▼</span>
+        </div>
+      
+      <div class="month-body open" id="mdm2">
+        <table class="creator-table">
+          <tbody><tr><td class="col-head" style="width:110px">크리에이터</td><td class="col-head" style="width:145px">예산</td><td class="col-head">조회수 입력</td><td class="col-head">링크</td><td class="col-head" style="width:60px">편집</td></tr>
+          <tr>
+            <td><div class="c-name">수빙수</div></td>
+            <td><div class="budget-mono">13,200,000원</div></td>
+            <td><div class="view-row">
+              <span class="plat-badge plat-yt">YT</span>
+              <input class="view-inp" value="74392" placeholder="조회수" onchange="saveViews(&#39;m2&#39;,0,0,this.value)">
+              <span class="view-result">74,392회</span>
+            </div><div class="view-row">
+              <span class="plat-badge plat-yt">YT</span>
+              <input class="view-inp" value="31446" placeholder="조회수" onchange="saveViews(&#39;m2&#39;,0,1,this.value)">
+              <span class="view-result">31,446회</span>
+            </div></td>
+            <td><div class="links-wrap"><a class="lchip lc-yt" href="https://www.youtube.com/watch?v=gkIfmma2JvM&amp;t=235s" target="_blank">▶ YT 영상</a><a class="lchip lc-yt" href="https://www.youtube.com/shorts/bfxlHkMW0ZA" target="_blank">▶ YT Shorts</a></div></td>
+            <td><button class="btn btn-sm" onclick="openCreatorModal(&#39;m2&#39;,&#39;c4&#39;)">편집</button></td>
+          </tr><tr>
+            <td><div class="c-name">복득이</div></td>
+            <td><div class="budget-mono">6,050,000원</div></td>
+            <td><div class="view-row">
+              <span class="plat-badge plat-yt">YT</span>
+              <input class="view-inp" value="1859841" placeholder="조회수" onchange="saveViews(&#39;m2&#39;,1,0,this.value)">
+              <span class="view-result">1,859,841회</span>
+            </div><div class="view-row">
+              <span class="plat-badge plat-ig">IG</span>
+              <input class="view-inp" value="3190000" placeholder="조회수" onchange="saveViews(&#39;m2&#39;,1,1,this.value)">
+              <span class="view-result">3,190,000회</span>
+            </div></td>
+            <td><div class="links-wrap"><a class="lchip lc-yt" href="https://www.youtube.com/shorts/RsPZD5DczPA" target="_blank">▶ YT Shorts</a><a class="lchip lc-ig" href="https://www.instagram.com/reel/DU-kcp-EUly/" target="_blank">◈ IG Reel</a></div></td>
+            <td><button class="btn btn-sm" onclick="openCreatorModal(&#39;m2&#39;,&#39;c5&#39;)">편집</button></td>
+          </tr>
+        </tbody></table>
+        <div style="padding:10px 1.25rem;border-top:1px solid var(--border);">
+          <button class="btn btn-sm" onclick="quickAddCreator(&#39;m2&#39;)">+ 크리에이터 추가</button>
+        </div>
+      </div>
+    <div class="month-block">
+      <button class="month-head" onclick="toggle(&#39;mdm3&#39;,&#39;mdcm3&#39;)">
+        <div class="mh-l"><div class="mh-dot" style="background:#c13584"></div><div><div class="mh-name">3월</div><div class="mh-meta">1명 · 20,900,000원</div></div></div>
+        <div class="mh-r">
+          <div class="mh-stat"><div class="mh-stat-v">4,376,988회</div><div class="mh-stat-l">총 조회수</div></div>
+          </div></button><button class="btn btn-sm" onclick="event.stopPropagation();openMonthEditModal(&#39;m3&#39;)">월 편집</button>
+          <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteMonth(&#39;m3&#39;)">삭제</button>
+          <span class="chevron" id="mdcm3" style="transform:rotate(180deg)">▼</span>
+        </div>
+      
+      <div class="month-body open" id="mdm3">
+        <table class="creator-table">
+          <tbody><tr><td class="col-head" style="width:110px">크리에이터</td><td class="col-head" style="width:145px">예산</td><td class="col-head">조회수 입력</td><td class="col-head">링크</td><td class="col-head" style="width:60px">편집</td></tr>
+          <tr>
+            <td><div class="c-name">한스</div></td>
+            <td><div class="budget-mono">20,900,000원</div></td>
+            <td><div class="view-row">
+              <span class="plat-badge plat-yt">YT</span>
+              <input class="view-inp" value="326324" placeholder="조회수" onchange="saveViews(&#39;m3&#39;,0,0,this.value)">
+              <span class="view-result">326,324회</span>
+            </div><div class="view-row">
+              <span class="plat-badge plat-yt">YT</span>
+              <input class="view-inp" value="1001864" placeholder="조회수" onchange="saveViews(&#39;m3&#39;,0,1,this.value)">
+              <span class="view-result">1,001,864회</span>
+            </div><div class="view-row">
+              <span class="plat-badge plat-ig">IG</span>
+              <input class="view-inp" value="2871000" placeholder="조회수" onchange="saveViews(&#39;m3&#39;,0,2,this.value)">
+              <span class="view-result">2,871,000회</span>
+            </div><div class="view-row">
+              <span class="plat-badge plat-tt">TT</span>
+              <input class="view-inp" value="177800" placeholder="조회수" onchange="saveViews(&#39;m3&#39;,0,3,this.value)">
+              <span class="view-result">177,800회</span>
+            </div></td>
+            <td><div class="links-wrap"><a class="lchip lc-yt" href="https://www.youtube.com/watch?v=wTWhS5l6KH4&amp;t=183s" target="_blank">▶ YT 영상</a><a class="lchip lc-yt" href="https://www.youtube.com/shorts/a4M4s78JXAg" target="_blank">▶ YT Shorts</a><a class="lchip lc-ig" href="https://www.instagram.com/reel/DV0x9v6jo6U/" target="_blank">◈ IG Reel</a><a class="lchip lc-tt" href="https://www.tiktok.com/@hans.daily/video/7616718596625976583" target="_blank">♪ TikTok</a></div></td>
+            <td><button class="btn btn-sm" onclick="openCreatorModal(&#39;m3&#39;,&#39;c6&#39;)">편집</button></td>
+          </tr>
+        </tbody></table>
+        <div style="padding:10px 1.25rem;border-top:1px solid var(--border);">
+          <button class="btn btn-sm" onclick="quickAddCreator(&#39;m3&#39;)">+ 크리에이터 추가</button>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- Performance -->
+    <div id="page-performance" class="page" style="display: none;">
+      <div class="page-header">
+        <div><div class="page-title">광고 성과</div><div class="page-sub">크리에이터별 ROI 및 효율 분석</div></div>
+        <div class="hd-actions"><button class="btn btn-save" onclick="saveToStorage()">💾 저장</button></div>
+      </div>
+      <div class="metrics" id="perfMetrics">
+    <div class="metric-card"><div class="metric-label">평균 CPV</div><div class="metric-value">₩5.53</div><div class="metric-sub">조회 1회당 비용</div></div>
+    <div class="metric-card"><div class="metric-label">1만뷰 비용</div><div class="metric-value">55,331원</div><div class="metric-sub">CPM 기준</div></div>
+    <div class="metric-card"><div class="metric-label">최고 성과 월</div><div class="metric-value">2월</div><div class="metric-sub">조회수 기준</div></div>
+    <div class="metric-card"><div class="metric-label">최고 ROI</div><div class="metric-value" style="font-size:15px">복득이</div><div class="metric-sub">CPV ₩1.20</div></div></div>
+      <div class="sec-header"><div class="section-title">크리에이터별 성과 순위</div></div>
+      <table class="perf-table"><thead><tr><th>순위</th><th>크리에이터</th><th>월</th><th>예산</th><th>총 조회수</th><th>CPV</th><th>1만뷰 비용</th></tr></thead><tbody id="perfTableBody"><tr><td class="rank-1 mono">1</td><td><strong>복득이</strong></td><td>2월</td><td class="mono">6,050,000원</td><td class="mono">5,049,841회</td><td class="mono rank-1">₩1.20</td><td class="mono">11,981원</td></tr><tr><td class="rank-2 mono">2</td><td><strong>한스</strong></td><td>3월</td><td class="mono">20,900,000원</td><td class="mono">4,376,988회</td><td class="mono rank-2">₩4.77</td><td class="mono">47,750원</td></tr><tr><td class="rank-3 mono">3</td><td><strong>보리와냥이</strong></td><td>1월</td><td class="mono">1,430,000원</td><td class="mono">178,674회</td><td class="mono rank-3">₩8.00</td><td class="mono">80,034원</td></tr><tr><td class=" mono">4</td><td><strong>그냥필름</strong></td><td>1월</td><td class="mono">19,800,000원</td><td class="mono">1,553,860회</td><td class="mono ">₩12.74</td><td class="mono">127,425원</td></tr><tr><td class=" mono">5</td><td><strong>할머니랑나</strong></td><td>1월</td><td class="mono">1,320,000원</td><td class="mono">66,693회</td><td class="mono ">₩19.79</td><td class="mono">197,922원</td></tr><tr><td class=" mono">6</td><td><strong>수빙수</strong></td><td>2월</td><td class="mono">13,200,000원</td><td class="mono">105,838회</td><td class="mono ">₩124.72</td><td class="mono">1,247,189원</td></tr><tr><td class=" mono">7</td><td><strong>새 크리에이터</strong></td><td>1월</td><td class="mono">0원</td><td class="mono">미입력</td><td class="mono ">-</td><td class="mono">-</td></tr></tbody></table>
+    </div>
+  </main>
+</div>
+
+<!-- 월 추가/편집 Modal -->
+<div class="modal-overlay" id="monthModal">
+  <div class="modal">
+    <div class="modal-title" id="monthModalTitle">월 추가</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">월 이름</label><input class="form-input" id="mName" placeholder="예: 4월"></div>
+      <div class="form-group"><label class="form-label">색상</label><input type="color" class="form-input" id="mColor" value="#7c3aed" style="height:40px;padding:4px;"></div>
+    </div>
+    <div class="divider"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div style="font-size:13px;font-weight:700;color:var(--text2)">크리에이터</div>
+      <button class="btn btn-sm" onclick="addCB()">+ 추가</button>
+    </div>
+    <div id="cbList"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeMonthModal()">취소</button>
+      <button class="btn btn-primary" onclick="saveMonthModal()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 크리에이터 편집 Modal -->
+<div class="modal-overlay" id="creatorModal">
+  <div class="modal">
+    <div class="modal-title">크리에이터 편집</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">이름</label><input class="form-input" id="cmName" placeholder="크리에이터 이름"></div>
+      <div class="form-group"><label class="form-label">예산 (원)</label><input class="form-input mono" id="cmBudget" placeholder="0" type="number"></div>
+    </div>
+    <div class="divider"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <div style="font-size:13px;font-weight:700;color:var(--text2)">플랫폼 링크 및 조회수</div>
+      <button class="btn btn-sm" onclick="addCMLR()">+ 링크 추가</button>
+    </div>
+    <div style="display:grid;grid-template-columns:90px 1fr 110px 28px;gap:8px;margin-bottom:4px;padding:0 2px;">
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;">플랫폼</span>
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;">URL</span>
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;">조회수</span>
+      <span></span>
+    </div>
+    <div id="cmLinkList"></div>
+    <div class="modal-actions">
+      <button class="btn btn-danger btn-sm" onclick="deleteCreator()">삭제</button>
+      <div style="flex:1"></div>
+      <button class="btn" onclick="closeCreatorModal()">취소</button>
+      <button class="btn btn-primary" onclick="saveCreatorModal()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ 저장 완료!</div>
+
+<script>
+const PI = {yt:'▶',ig:'◈',tt:'♪'};
+
+const DEFAULT = {months:[
+  {id:'m1',name:'1월',color:'#3266ad',creators:[
+    {id:'c1',name:'그냥필름',budget:19800000,links:[
+      {platform:'yt',label:'YT 영상',url:'https://www.youtube.com/watch?v=SXO6GPRaMdA',views:647455},
+      {platform:'yt',label:'YT Shorts',url:'https://www.youtube.com/shorts/aqRmlw2zG5c',views:104405},
+      {platform:'ig',label:'IG Reel',url:'https://www.instagram.com/reel/DUKmdcKkhJR/',views:0}
+    ]},
+    {id:'c2',name:'보리와냥이',budget:1430000,links:[
+      {platform:'yt',label:'YT Shorts',url:'https://www.youtube.com/shorts/L1i1rjcTRVs',views:53274},
+      {platform:'ig',label:'IG Reel',url:'https://www.instagram.com/reel/DUKTyQCE2WZ/',views:0},
+      {platform:'tt',label:'TikTok',url:'https://www.tiktok.com/@cute.ai27/video/7601374124451122450',views:0}
+    ]},
+    {id:'c3',name:'할머니랑나',budget:1320000,links:[
+      {platform:'yt',label:'YT Shorts',url:'https://www.youtube.com/shorts/FIbz_qtSt0c',views:66693}
+    ]}
+  ]},
+  {id:'m2',name:'2월',color:'#1D9E75',creators:[
+    {id:'c4',name:'수빙수',budget:13200000,links:[
+      {platform:'yt',label:'YT 영상',url:'https://www.youtube.com/watch?v=gkIfmma2JvM&t=235s',views:74392},
+      {platform:'yt',label:'YT Shorts',url:'https://www.youtube.com/shorts/bfxlHkMW0ZA',views:31446}
+    ]},
+    {id:'c5',name:'복득이',budget:6050000,links:[
+      {platform:'yt',label:'YT Shorts',url:'https://www.youtube.com/shorts/RsPZD5DczPA',views:1859841},
+      {platform:'ig',label:'IG Reel',url:'https://www.instagram.com/reel/DU-kcp-EUly/',views:0}
+    ]}
+  ]},
+  {id:'m3',name:'3월',color:'#c13584',creators:[
+    {id:'c6',name:'한스',budget:20900000,links:[
+      {platform:'yt',label:'YT 영상',url:'https://www.youtube.com/watch?v=wTWhS5l6KH4&t=183s',views:326324},
+      {platform:'yt',label:'YT Shorts',url:'https://www.youtube.com/shorts/a4M4s78JXAg',views:1001864},
+      {platform:'ig',label:'IG Reel',url:'https://www.instagram.com/reel/DV0x9v6jo6U/',views:0},
+      {platform:'tt',label:'TikTok',url:'https://www.tiktok.com/@hans.daily/video/7616718596625976583',views:0}
+    ]}
+  ]}
+]};
+
+let data = JSON.parse(JSON.stringify(DEFAULT));
+let annualBudget = 240000000;
+let editingMonthId = null;
+let editingCreatorId = null;
+let editingCreatorMonthId = null;
+let cbCount = 0;
+let cmLRCount = 0;
+let unsaved = false;
+
+// ── Storage ─────────────────────────────────────────────
+function saveToStorage() {
+  try {
+    localStorage.setItem('snsAdsData2', JSON.stringify(data));
+    localStorage.setItem('snsAnnualBudget2', annualBudget);
+    unsaved = false;
+    setSaved(true);
+    showToast('✓ 저장 완료!');
+  } catch(e) { showToast('저장 실패: ' + e.message); }
+}
+function loadFromStorage() {
+  try {
+    const d = localStorage.getItem('snsAdsData2');
+    const b = localStorage.getItem('snsAnnualBudget2');
+    if (d) data = JSON.parse(d);
+    if (b) {
+      annualBudget = parseInt(b);
+      document.getElementById('annualBudgetInput').value = annualBudget.toLocaleString('ko-KR');
+    }
+    if (d) setSaved(true);
+  } catch(e) {}
+}
+function setSaved(ok) {
+  document.getElementById('saveDot').style.background = ok ? '#16a34a' : '#d97706';
+  document.getElementById('saveStatus').textContent = ok
+    ? '저장됨 · ' + new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})
+    : '미저장';
+}
+function markUnsaved() { unsaved = true; setSaved(false); }
+
+// ── Toast ─────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── Utils ─────────────────────────────────────────────
+function uid() { return '_' + Math.random().toString(36).slice(2,9); }
+function totalBudget() { return data.months.reduce((s,m)=>s+m.creators.reduce((ss,c)=>ss+c.budget,0),0); }
+function totalViews() { return data.months.reduce((s,m)=>s+m.creators.reduce((ss,c)=>ss+c.links.reduce((sss,l)=>sss+(l.views||0),0),0),0); }
+function cViews(c) { return c.links.reduce((s,l)=>s+(l.views||0),0); }
+function detectPlat(url) {
+  if(url.includes('youtube')||url.includes('youtu.be')) return 'yt';
+  if(url.includes('instagram')) return 'ig';
+  if(url.includes('tiktok')) return 'tt';
+  return 'yt';
+}
+function platLabel(p,url) {
+  if(p==='yt') return url.includes('shorts')?'YT Shorts':'YT 영상';
+  if(p==='ig') return 'IG Reel';
+  return 'TikTok';
+}
+
+// ── Render All ─────────────────────────────────────────────
+function renderAll() {
+  renderMetrics(); renderBT(); renderSummary(); renderDetail(); renderPerf();
+}
+
+function renderMetrics() {
+  const b=totalBudget(),v=totalViews();
+  const cpv=v>0?(b/v):0, cpm=v>0?Math.round(b/(v/10000)):0;
+  document.getElementById('metricsArea').innerHTML=`
+    <div class="metric-card"><div class="metric-label">총 광고 예산</div><div class="metric-value">${b.toLocaleString('ko-KR')}원</div><div class="metric-sub">${data.months.length}개월 집행</div></div>
+    <div class="metric-card"><div class="metric-label">총 조회수</div><div class="metric-value">${v>0?v.toLocaleString('ko-KR')+'회':'-'}</div><div class="metric-sub">전 플랫폼 합산</div></div>
+    <div class="metric-card"><div class="metric-label">평균 CPV</div><div class="metric-value">${v>0?'₩'+cpv.toFixed(2):'-'}</div><div class="metric-sub">조회당 광고 비용</div></div>
+    <div class="metric-card"><div class="metric-label">1만뷰당 비용</div><div class="metric-value">${v>0?cpm.toLocaleString('ko-KR')+'원':'-'}</div><div class="metric-sub">CPM 기준</div></div>`;
+}
+
+function renderBT() {
+  const used=totalBudget(),total=annualBudget,pct=total>0?(used/total*100):0,remain=total-used;
+  document.getElementById('btUsed').textContent=used.toLocaleString('ko-KR')+'원';
+  document.getElementById('btTotal').textContent=total>0?total.toLocaleString('ko-KR')+'원':'미설정';
+  const pEl=document.getElementById('btPct');
+  pEl.textContent=total>0?pct.toFixed(1)+'%':'-';
+  pEl.style.color=pct>=100?'#dc2626':pct>=80?'#d97706':'#16a34a';
+  document.getElementById('btRemain').textContent=total>0?(remain>=0?'잔여 '+remain.toLocaleString('ko-KR')+'원':'초과 '+Math.abs(remain).toLocaleString('ko-KR')+'원'):'연간 예산을 입력하세요';
+  const bar=document.getElementById('btBar');
+  bar.style.width=Math.min(pct,100).toFixed(1)+'%';
+  bar.className='progress-fill '+(pct>=100?'p-over':pct>=80?'p-warn':'p-safe');
+  document.getElementById('btMonthBars').innerHTML=total>0?data.months.map(m=>{
+    const mb=m.creators.reduce((s,c)=>s+c.budget,0),mp=(mb/total*100).toFixed(1);
+    return `<div class="mbar-row"><div class="mbar-lbl">${m.name}</div><div class="mbar-track"><div class="mbar-fill" style="width:${Math.min(mp,100)}%;background:${m.color}"></div></div><div class="mbar-val">${mb.toLocaleString('ko-KR')}원 (${mp}%)</div></div>`;
+  }).join(''):'';
+}
+
+function onBudgetInput(val) {
+  annualBudget=parseInt(val.replace(/[^0-9]/g,''))||0;
+  renderBT(); markUnsaved();
+}
+
+function renderSummary() {
+  document.getElementById('monthSummaryCards').innerHTML=data.months.map(m=>{
+    const b=m.creators.reduce((s,c)=>s+c.budget,0),v=m.creators.reduce((s,c)=>s+cViews(c),0),cpv=v>0?(b/v).toFixed(2):'-';
+    return `<div class="month-block">
+      <button class="month-head" onclick="toggle('ms${m.id}','mc${m.id}')">
+        <div class="mh-l"><div class="mh-dot" style="background:${m.color}"></div><div><div class="mh-name">${m.name}</div><div class="mh-meta">${m.creators.length}명</div></div></div>
+        <div class="mh-r">
+          <div class="mh-stat"><div class="mh-stat-v">${b.toLocaleString('ko-KR')}원</div><div class="mh-stat-l">예산</div></div>
+          <div class="mh-stat"><div class="mh-stat-v">${v>0?v.toLocaleString('ko-KR')+'회':'-'}</div><div class="mh-stat-l">조회수</div></div>
+          <div class="mh-stat"><div class="mh-stat-v">${v>0?'₩'+cpv:'-'}</div><div class="mh-stat-l">CPV</div></div>
+          <span class="chevron" id="mc${m.id}">▼</span>
+        </div>
+      </button>
+      <div class="month-body" id="ms${m.id}">
+        <table class="creator-table">
+          <tr><td class="col-head" style="width:120px">크리에이터</td><td class="col-head" style="width:150px">예산</td><td class="col-head" style="width:180px">조회수</td><td class="col-head">링크</td></tr>
+          ${m.creators.map(c=>`<tr>
+            <td><div class="c-name">${c.name}</div></td>
+            <td><div class="budget-mono">${c.budget.toLocaleString('ko-KR')}원</div></td>
+            <td>${c.links.map(l=>`<div class="view-row"><span class="plat-badge plat-${l.platform}">${l.platform.toUpperCase()}</span><span class="view-result">${l.views>0?l.views.toLocaleString('ko-KR')+'회':'-'}</span></div>`).join('')}</td>
+            <td><div class="links-wrap">${c.links.map(l=>`<a class="lchip lc-${l.platform}" href="${l.url}" target="_blank">${PI[l.platform]} ${l.label}</a>`).join('')}</div></td>
+          </tr>`).join('')}
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderDetail() {
+  document.getElementById('monthDetailBlocks').innerHTML=data.months.map(m=>{
+    const b=m.creators.reduce((s,c)=>s+c.budget,0),v=m.creators.reduce((s,c)=>s+cViews(c),0);
+    return `<div class="month-block">
+      <button class="month-head" onclick="toggle('md${m.id}','mdc${m.id}')">
+        <div class="mh-l"><div class="mh-dot" style="background:${m.color}"></div><div><div class="mh-name">${m.name}</div><div class="mh-meta">${m.creators.length}명 · ${b.toLocaleString('ko-KR')}원</div></div></div>
+        <div class="mh-r">
+          <div class="mh-stat"><div class="mh-stat-v">${v>0?v.toLocaleString('ko-KR')+'회':'미입력'}</div><div class="mh-stat-l">총 조회수</div></div>
+          <button class="btn btn-sm" onclick="event.stopPropagation();openMonthEditModal('${m.id}')">월 편집</button>
+          <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteMonth('${m.id}')">삭제</button>
+          <span class="chevron" id="mdc${m.id}" style="transform:rotate(180deg)">▼</span>
+        </div>
+      </button>
+      <div class="month-body open" id="md${m.id}">
+        <table class="creator-table">
+          <tr><td class="col-head" style="width:110px">크리에이터</td><td class="col-head" style="width:145px">예산</td><td class="col-head">조회수 입력</td><td class="col-head">링크</td><td class="col-head" style="width:60px">편집</td></tr>
+          ${m.creators.map((c,ci)=>`<tr>
+            <td><div class="c-name">${c.name}</div></td>
+            <td><div class="budget-mono">${c.budget.toLocaleString('ko-KR')}원</div></td>
+            <td>${c.links.map((l,li)=>`<div class="view-row">
+              <span class="plat-badge plat-${l.platform}">${l.platform.toUpperCase()}</span>
+              <input class="view-inp" value="${l.views>0?l.views:''}" placeholder="조회수" onchange="saveViews('${m.id}',${ci},${li},this.value)">
+              ${l.views>0?`<span class="view-result">${l.views.toLocaleString('ko-KR')}회</span>`:''}
+            </div>`).join('')}</td>
+            <td><div class="links-wrap">${c.links.map(l=>`<a class="lchip lc-${l.platform}" href="${l.url}" target="_blank">${PI[l.platform]} ${l.label}</a>`).join('')}</div></td>
+            <td><button class="btn btn-sm" onclick="openCreatorModal('${m.id}','${c.id}')">편집</button></td>
+          </tr>`).join('')}
+        </table>
+        <div style="padding:10px 1.25rem;border-top:1px solid var(--border);">
+          <button class="btn btn-sm" onclick="quickAddCreator('${m.id}')">+ 크리에이터 추가</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPerf() {
+  const b=totalBudget(),v=totalViews();
+  const cpv=v>0?(b/v).toFixed(2):'-',cpm=v>0?Math.round(b/(v/10000)).toLocaleString('ko-KR')+'원':'-';
+  let all=[];
+  data.months.forEach(m=>m.creators.forEach(c=>{const vv=cViews(c);all.push({name:c.name,month:m.name,budget:c.budget,views:vv,cpv:vv>0?c.budget/vv:Infinity});}));
+  all.sort((a,b)=>a.cpv-b.cpv);
+  const best=all.find(c=>c.views>0);
+  const bm=(()=>{let r=null,bv=0;data.months.forEach(m=>{const v=m.creators.reduce((s,c)=>s+cViews(c),0);if(v>bv){bv=v;r=m.name;}});return r||'-';})();
+  document.getElementById('perfMetrics').innerHTML=`
+    <div class="metric-card"><div class="metric-label">평균 CPV</div><div class="metric-value">${v>0?'₩'+cpv:'-'}</div><div class="metric-sub">조회 1회당 비용</div></div>
+    <div class="metric-card"><div class="metric-label">1만뷰 비용</div><div class="metric-value">${cpm}</div><div class="metric-sub">CPM 기준</div></div>
+    <div class="metric-card"><div class="metric-label">최고 성과 월</div><div class="metric-value">${bm}</div><div class="metric-sub">조회수 기준</div></div>
+    <div class="metric-card"><div class="metric-label">최고 ROI</div><div class="metric-value" style="font-size:15px">${best?best.name:'-'}</div><div class="metric-sub">${best&&best.views>0?'CPV ₩'+best.cpv.toFixed(2):''}</div></div>`;
+  document.getElementById('perfTableBody').innerHTML=all.map((c,i)=>{
+    const rc=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
+    return `<tr><td class="${rc} mono">${i+1}</td><td><strong>${c.name}</strong></td><td>${c.month}</td><td class="mono">${c.budget.toLocaleString('ko-KR')}원</td><td class="mono">${c.views>0?c.views.toLocaleString('ko-KR')+'회':'미입력'}</td><td class="mono ${rc}">${c.views>0?'₩'+c.cpv.toFixed(2):'-'}</td><td class="mono">${c.views>0?Math.round(c.budget/(c.views/10000)).toLocaleString('ko-KR')+'원':'-'}</td></tr>`;
+  }).join('');
+}
+
+// ── UI ─────────────────────────────────────────────
+function showPage(id,btn) {
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  document.getElementById('page-'+id).style.display='block';
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+function toggle(bodyId,chevId) {
+  const b=document.getElementById(bodyId),c=document.getElementById(chevId);
+  const op=b.classList.contains('open');
+  b.classList.toggle('open');
+  b.style.display=op?'none':'block';
+  c.style.transform=op?'':'rotate(180deg)';
+}
+function saveViews(mId,ci,li,val) {
+  const m=data.months.find(x=>x.id===mId);
+  if(!m) return;
+  m.creators[ci].links[li].views=parseInt(val.replace(/[^0-9]/g,''))||0;
+  renderAll(); markUnsaved();
+}
+
+// ── Month Modal ─────────────────────────────────────────────
+function openMonthModal() {
+  editingMonthId=null; cbCount=0;
+  document.getElementById('monthModalTitle').textContent='월 추가';
+  document.getElementById('mName').value='';
+  document.getElementById('mColor').value='#7c3aed';
+  document.getElementById('cbList').innerHTML='';
+  addCB();
+  document.getElementById('monthModal').classList.add('open');
+}
+function openMonthEditModal(mId) {
+  const m=data.months.find(x=>x.id===mId);
+  if(!m) return;
+  editingMonthId=mId; cbCount=0;
+  document.getElementById('monthModalTitle').textContent='월 편집 — '+m.name;
+  document.getElementById('mName').value=m.name;
+  document.getElementById('mColor').value=m.color;
+  document.getElementById('cbList').innerHTML='';
+  m.creators.forEach(c=>addCB(c));
+  document.getElementById('monthModal').classList.add('open');
+}
+function closeMonthModal() { document.getElementById('monthModal').classList.remove('open'); }
+
+let cbLinkCounts={};
+function addCB(c) {
+  const id=cbCount++;
+  cbLinkCounts[id]=0;
+  const div=document.createElement('div');
+  div.className='cb'; div.id='cb_'+id;
+  div.innerHTML=`<div class="cb-head"><div class="cb-title">크리에이터 ${id+1}</div><button class="btn btn-sm btn-danger" onclick="document.getElementById('cb_${id}').remove()">삭제</button></div>
+    <div class="form-row" style="margin-bottom:8px">
+      <div class="form-group"><label class="form-label">이름</label><input class="form-input cb-n" placeholder="이름" value="${c?c.name:''}"></div>
+      <div class="form-group"><label class="form-label">예산 (원)</label><input class="form-input cb-b mono" placeholder="0" type="number" value="${c?c.budget:''}"></div>
+    </div>
+    <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">링크 (URL + 플랫폼 선택)</div>
+    <div class="cb-lrs-${id}">${(c&&c.links||[]).map(l=>cbLRHtml(id,l)).join('')}</div>
+    <button class="btn btn-sm" style="margin-top:4px" onclick="addCBLR(${id})">+ 링크</button>`;
+  document.getElementById('cbList').appendChild(div);
+}
+function cbLRHtml(bid,l) {
+  const li=(cbLinkCounts[bid]||0); cbLinkCounts[bid]=(cbLinkCounts[bid]||0)+1;
+  const p=l?l.platform:'yt',u=l?l.url:'';
+  return `<div class="lr" id="cblr_${bid}_${li}">
+    <select class="lr-p"><option value="yt"${p==='yt'?' selected':''}>YouTube</option><option value="ig"${p==='ig'?' selected':''}>Instagram</option><option value="tt"${p==='tt'?' selected':''}>TikTok</option></select>
+    <input placeholder="URL" value="${u}" class="lr-u">
+    <button class="btn-icon" onclick="this.closest('.lr').remove()">✕</button>
+  </div>`;
+}
+function addCBLR(bid) {
+  const wrap=document.querySelector('.cb-lrs-'+bid);
+  const d=document.createElement('div');
+  d.innerHTML=cbLRHtml(bid,null);
+  wrap.appendChild(d.firstElementChild);
+}
+
+function saveMonthModal() {
+  const name=document.getElementById('mName').value.trim();
+  const color=document.getElementById('mColor').value;
+  if(!name){showToast('월 이름을 입력하세요');return;}
+  const creators=[];
+  document.querySelectorAll('#cbList .cb').forEach(block=>{
+    const cname=block.querySelector('.cb-n').value.trim();
+    const budget=parseInt(block.querySelector('.cb-b').value)||0;
+    if(!cname) return;
+    const links=[];
+    block.querySelectorAll('.lr').forEach(row=>{
+      const url=row.querySelector('.lr-u').value.trim();
+      if(!url) return;
+      const p=row.querySelector('.lr-p').value;
+      links.push({platform:p,label:platLabel(p,url),url,views:0});
+    });
+    creators.push({id:uid(),name:cname,budget,links});
+  });
+  if(!creators.length){showToast('크리에이터를 최소 1명 입력하세요');return;}
+  if(editingMonthId){
+    const m=data.months.find(x=>x.id===editingMonthId);
+    if(m){m.name=name;m.color=color;m.creators=creators;}
+  } else {
+    data.months.push({id:uid(),name,color,creators});
+  }
+  closeMonthModal(); renderAll(); markUnsaved();
+}
+function deleteMonth(mId) {
+  if(!confirm('이 월 데이터를 삭제할까요?')) return;
+  data.months=data.months.filter(m=>m.id!==mId);
+  renderAll(); markUnsaved();
+}
+
+// ── Creator Modal ─────────────────────────────────────────────
+function openCreatorModal(mId,cId) {
+  const m=data.months.find(x=>x.id===mId);
+  const c=m&&m.creators.find(x=>x.id===cId);
+  if(!c) return;
+  editingCreatorMonthId=mId; editingCreatorId=cId; cmLRCount=0;
+  document.getElementById('cmName').value=c.name;
+  document.getElementById('cmBudget').value=c.budget;
+  document.getElementById('cmLinkList').innerHTML='';
+  c.links.forEach(l=>addCMLR(l));
+  document.getElementById('creatorModal').classList.add('open');
+}
+function closeCreatorModal(){document.getElementById('creatorModal').classList.remove('open');}
+
+function addCMLR(l) {
+  const id=cmLRCount++;
+  const p=l?l.platform:'yt',u=l?l.url:'',v=l&&l.views>0?l.views:'';
+  const div=document.createElement('div');
+  div.className='cm-lr'; div.id='cmlr_'+id;
+  div.innerHTML=`
+    <select class="cml-p"><option value="yt"${p==='yt'?' selected':''}>YouTube</option><option value="ig"${p==='ig'?' selected':''}>Instagram</option><option value="tt"${p==='tt'?' selected':''}>TikTok</option></select>
+    <input placeholder="URL" value="${u}" class="cml-u">
+    <input placeholder="조회수" value="${v}" type="number" class="cml-v cm-views">
+    <button class="btn-icon" onclick="document.getElementById('cmlr_${id}').remove()">✕</button>`;
+  document.getElementById('cmLinkList').appendChild(div);
+}
+
+function saveCreatorModal() {
+  const m=data.months.find(x=>x.id===editingCreatorMonthId);
+  if(!m) return;
+  const ci=m.creators.findIndex(x=>x.id===editingCreatorId);
+  if(ci<0) return;
+  const name=document.getElementById('cmName').value.trim();
+  const budget=parseInt(document.getElementById('cmBudget').value)||0;
+  if(!name){showToast('이름을 입력하세요');return;}
+  const links=[];
+  document.querySelectorAll('[id^="cmlr_"]').forEach(row=>{
+    const url=row.querySelector('.cml-u').value.trim();
+    if(!url) return;
+    const p=row.querySelector('.cml-p').value;
+    const v=parseInt(row.querySelector('.cml-v').value)||0;
+    links.push({platform:p,label:platLabel(p,url),url,views:v});
+  });
+  m.creators[ci]={...m.creators[ci],name,budget,links};
+  closeCreatorModal(); renderAll(); markUnsaved();
+}
+function deleteCreator() {
+  if(!confirm('이 크리에이터를 삭제할까요?')) return;
+  const m=data.months.find(x=>x.id===editingCreatorMonthId);
+  if(!m) return;
+  m.creators=m.creators.filter(x=>x.id!==editingCreatorId);
+  closeCreatorModal(); renderAll(); markUnsaved();
+}
+function quickAddCreator(mId) {
+  const m=data.months.find(x=>x.id===mId);
+  if(!m) return;
+  const newC={id:uid(),name:'새 크리에이터',budget:0,links:[]};
+  m.creators.push(newC);
+  renderAll(); markUnsaved();
+  setTimeout(()=>openCreatorModal(mId,newC.id),80);
+}
+
+// ── Init ─────────────────────────────────────────────
+loadFromStorage();
+renderAll();
+window.addEventListener('beforeunload',e=>{if(unsaved){e.preventDefault();e.returnValue='';}});
+</script>
+
+
+</body></html>
